@@ -282,10 +282,10 @@ const SITE = {
     // Optional cut-out image in the centre. Set to null for type only.
     portrait: "media/bg/contact-still.jpg",
     links: [
-      { label: "INSTAGRAM", href: "https://instagram.com/CHANGE-ME" },
-      { label: "MAIL",      href: "mailto:CHANGE-ME@example.com"    },
-      { label: "YOUTUBE",   href: "https://youtube.com/@CHANGE-ME"  },
-      { label: "LINKEDIN",  href: "https://linkedin.com/in/CHANGE-ME" }
+      { label: "INSTAGRAM", href: "https://instagram.com/bayo_oj" },
+      { label: "MAIL",      href: "mailto:bayosayshi@gmail.com"    },
+      { label: "YOUTUBE",   href: "https://youtube.com/@Bayosayshi"  },
+      { label: "LINKEDIN",  href: "https://linkedin.com/in/ojoadebayo/" }
     ],
     // Shown small at the bottom. Leave as empty strings to hide.
     location: "METRO VANCOUVER, BC",
