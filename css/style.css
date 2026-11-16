@@ -1,0 +1,774 @@
+/* ============================================================================
+   FONT — Poppins, self-hosted (no external requests, works offline)
+   ----------------------------------------------------------------------------
+   KARGO uses "Mozaic GEO", a licensed typeface we can't redistribute.
+   Poppins is the closest free match: the same geometric construction and,
+   measured against the real site, the same word widths to within 1-2px.
+
+   To change the whole site's typeface: drop new .woff2 files into /fonts,
+   rewrite the blocks below, then update --font in :root.
+   ========================================================================== */
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:100;
+  src:url("../fonts/poppins-latin-100-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:200;
+  src:url("../fonts/poppins-latin-200-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:300;
+  src:url("../fonts/poppins-latin-300-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:400;
+  src:url("../fonts/poppins-latin-400-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:500;
+  src:url("../fonts/poppins-latin-500-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:normal; font-weight:700;
+  src:url("../fonts/poppins-latin-700-normal.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Poppins"; font-style:italic; font-weight:700;
+  src:url("../fonts/poppins-latin-700-italic.woff2") format("woff2"); font-display:swap; }
+
+/* ============================================================================
+   BSH — STYLESHEET
+   ----------------------------------------------------------------------------
+   Colours, type sizes and spacing all live in the :root block below.
+   Change a value there and it updates everywhere on the site.
+   ========================================================================== */
+
+:root{
+  /* --- Type ------------------------------------------------------------ */
+  --font: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --nav-size: 16px;          /* the five main links            */
+  --meta-size: 10px;         /* clock, year, captions          */
+  --nav-weight: 200;         /* 100 thinner … 400 heavier      */
+
+  /* --- Colour ---------------------------------------------------------- */
+  --black: #000000;
+  --white: #ffffff;
+  --grey:  #cccccc;
+  --dim-grey: #8a8a8a;
+
+  /* --- Spacing --------------------------------------------------------- */
+  --gutter: 12px;            /* distance from the screen edge  */
+
+  /* --- Motion ---------------------------------------------------------- */
+  --roll-speed: .42s;
+  --ease: cubic-bezier(.76,.03,.21,.99);
+}
+
+/* --- Reset ------------------------------------------------------------- */
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{ height:100%; }
+
+body{
+  font-family: var(--font);
+  font-weight: var(--nav-weight);
+  background: var(--black);
+  color: var(--grey);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+a{ color:inherit; text-decoration:none; }
+img,video{ display:block; max-width:100%; }
+
+/* Page themes -----------------------------------------------------------
+   <body class="theme-dark">  → black page, light type   (home, works)
+   <body class="theme-light"> → white page, black type   (info, rates, contact)
+   ---------------------------------------------------------------------- */
+body.theme-dark { --fg: var(--grey);  --bg: var(--black); }
+/* a soft halo so the type survives a bright frame of video or a pale panel.
+   Invisible against black, quietly load-bearing against white. */
+body.theme-dark .nav__label,
+body.theme-dark .nav__meta,
+body.theme-dark .nav__logo,
+body.theme-dark .page-head,
+body.theme-dark .strip-hint,
+body.theme-dark .home-tagline,
+body.theme-dark .sound-toggle{ text-shadow: 0 0 18px rgba(0,0,0,.95), 0 0 6px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.7); }
+body.theme-light{ --fg: #111111;      --bg: var(--white); }
+body.theme-light{ background: var(--white); color:#111; }
+
+/* ============================================================================
+   NAVIGATION
+   Five slots spread edge to edge, vertically centred on screen.
+   Slot 1 carries the clock, slot 5 carries the year, the logo sits dead centre.
+   ========================================================================== */
+
+.nav{
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  pointer-events: none;           /* only the links themselves are clickable */
+}
+
+.nav__item{
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.18;
+}
+
+.nav__item--end{ align-items: flex-end; text-align: right; }
+
+.nav__label{
+  font-size: var(--nav-size);
+  letter-spacing: .02em;
+  color: var(--fg);
+  opacity: .85;
+  transition: opacity .3s var(--ease);
+  white-space: nowrap;
+}
+
+.nav__item:hover .nav__label{ opacity: 1; }
+
+.nav__meta{
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  color: var(--fg);
+  opacity: .62;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* Current page gets a subtle marker rather than a loud highlight */
+.nav__item[aria-current="page"] .nav__label{ opacity: 1; }
+
+/* ----------------------------------------------------------------------
+   NAV POSITION
+   body.nav-center  → the KARGO move: row floating in the middle of the screen.
+                      Right for pages that are mostly image (home, works,
+                      contact), where the type sits over the picture.
+   body.nav-bottom  → the same row pinned to the foot of the screen.
+                      Right for pages with a lot of reading on them
+                      (rates, info), where a centred row would land on top
+                      of the words.
+
+   To put a page back to the centred version, swap the class on its <body>.
+   -------------------------------------------------------------------- */
+body.nav-bottom .nav{
+  top: auto;
+  bottom: var(--gutter);
+  transform: none;
+  align-items: flex-end;
+}
+
+/* keep reading clear of the pinned row */
+body.nav-bottom .sheet{ padding-bottom: 112px; }
+
+/* --- Logo -------------------------------------------------------------- */
+.nav__logo{
+  pointer-events: auto;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: .06em;
+  color: var(--fg);
+  font-style: italic;
+  opacity: .95;
+  transition: opacity .3s var(--ease), transform .4s var(--ease);
+}
+.nav__logo:hover{ opacity:1; transform: scale(1.04); }
+.nav__logo img{ height: 18px; width:auto; }
+
+/* ============================================================================
+   ROLLING TEXT
+   Each letter is stacked twice. On hover the pair slides up one letter-height,
+   staggered left to right, so the word appears to re-type itself.
+   ========================================================================== */
+
+.roll{
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.roll__char{
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  height: 1.18em;
+  line-height: 1.18em;
+}
+
+.roll__char span{
+  display: block;
+  transition: transform var(--roll-speed) var(--ease);
+  will-change: transform;
+}
+
+/* the duplicate sitting one row below, ready to rise into place */
+.roll__char span:last-child{ position: absolute; top: 100%; left: 0; }
+
+.roll:hover .roll__char span{ transform: translateY(-100%); }
+
+/* a blank space still needs width */
+.roll__char--space{ width: .32em; }
+
+/* ============================================================================
+   HOME
+   ========================================================================== */
+
+.bg{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.bg video,
+.bg img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/* Darkening layer so the nav stays readable over bright footage.
+   Strength is set from SITE.background.dim in data.js */
+.bg__veil{
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--veil, .25);
+  pointer-events: none;
+}
+
+/* Sound toggle, bottom-left */
+.sound-toggle{
+  position: fixed;
+  left: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 110;
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  color: var(--fg);
+  opacity: .55;
+  background: none;
+  border: 0;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: opacity .3s var(--ease);
+}
+.sound-toggle:hover{ opacity: 1; }
+
+/* Bottom-right tagline */
+.home-tagline{
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 110;
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  color: var(--fg);
+  opacity: .55;
+  text-align: right;
+}
+
+/* ============================================================================
+   SHARED PAGE FURNITURE (inner pages)
+   ========================================================================== */
+
+.page{
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+}
+
+.page-head{
+  position: fixed;
+  top: var(--gutter);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  opacity: .6;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.page-foot{
+  position: fixed;
+  bottom: var(--gutter);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  opacity: .6;
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* The back-to-home affordance that replaces the logo on inner pages is the
+   logo itself — it always links home. Nothing extra needed. */
+
+/* ============================================================================
+   WORKS — a flat strip of tall panels that scrolls sideways
+   ========================================================================== */
+
+.strip{
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 var(--gutter);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.strip::-webkit-scrollbar{ display: none; }
+.strip.is-dragging{ cursor: grabbing; }
+
+.panel{
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(150px, 15vw, 230px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* the clipped window the image lives in */
+.panel__frame{
+  position: relative;
+  height: 78vh;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.panel__media{
+  position: absolute;
+  inset: 0;
+}
+
+.panel__media img,
+.panel__media video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease), opacity .5s var(--ease);
+}
+
+/* the preview video sits on top of the still and fades in on hover */
+.panel__media video{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.panel.is-playing .panel__media video{ opacity: 1; }
+.panel:hover .panel__media img{ transform: scale(1.04); }
+
+/* Small "play" marker, only on panels that actually have a video */
+.panel__cue{
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 3;
+  font-size: 9px;
+  letter-spacing: .08em;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+  text-shadow: 0 1px 6px rgba(0,0,0,.6);
+}
+.panel:hover .panel__cue{ opacity: .9; transform: translateY(0); }
+
+/* Caption under each panel */
+.panel__caption{
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: .06em;
+  color: var(--fg);
+  opacity: .72;
+}
+.panel__caption .t{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.panel__caption .y{ flex: 0 0 auto; opacity: .6; }
+
+/* Placeholder badge — disappears the moment a real video is added */
+.panel__placeholder{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  font-size: 8px;
+  letter-spacing: .1em;
+  padding: 3px 6px;
+  border: 1px solid rgba(255,255,255,.35);
+  color: rgba(255,255,255,.75);
+}
+
+.hint-narrow{ display:none; }
+
+/* Scroll hint, bottom centre */
+.strip-hint{
+  position: fixed;
+  bottom: var(--gutter);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  opacity: .45;
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   LIGHTBOX — plays a piece at its real aspect ratio
+   ========================================================================== */
+
+.lightbox{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .45s var(--ease), visibility .45s var(--ease);
+}
+.lightbox.is-open{ opacity: 1; visibility: visible; }
+
+.lightbox__inner{
+  /* shrink to whatever is being shown, so the caption and the close button
+     line up with the edges of the picture rather than the whole screen */
+  width: fit-content;
+  max-width: min(88vw, 1400px);
+  max-height: 82vh;
+  position: relative;
+}
+.lightbox__inner video,
+.lightbox__inner img{
+  max-width: min(88vw, 1400px);
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: #000;
+}
+
+.lightbox__meta{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  color: var(--grey);
+  opacity: .75;
+}
+
+.lightbox__close{
+  position: absolute;
+  top: -28px;
+  right: 0;
+  background: none;
+  border: 0;
+  color: var(--grey);
+  font-family: var(--font);
+  font-size: var(--meta-size);
+  letter-spacing: .5px;
+  cursor: pointer;
+  opacity: .7;
+}
+.lightbox__close:hover{ opacity: 1; }
+
+/* ============================================================================
+   RATES
+   ========================================================================== */
+
+.sheet{
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 72px var(--gutter) 64px;
+}
+
+.sheet__intro{
+  max-width: 62ch;
+  font-size: 12px;
+  line-height: 1.75;
+  letter-spacing: .04em;
+}
+
+.rates-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px;
+  margin-top: 56px;
+  background: rgba(0,0,0,.14);          /* becomes the hairline between cells */
+  border-top: 1px solid rgba(0,0,0,.14);
+  border-left: 1px solid rgba(0,0,0,.14);
+}
+
+.rate{
+  background: var(--white);
+  padding: 22px 20px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: background .4s var(--ease);
+}
+.rate:hover{ background: #fafafa; }
+
+.rate__name{ font-size: 13px; letter-spacing: .08em; }
+.rate__price{ font-size: 22px; font-weight: 300; letter-spacing: .02em; }
+.rate__meta{ font-size: 9px; letter-spacing: .1em; opacity: .55; }
+.rate__items{ list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.rate__items li{
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: .02em;
+  opacity: .8;
+  padding-left: 14px;
+  position: relative;
+}
+.rate__items li::before{
+  content: "—";
+  position: absolute;
+  left: 0;
+  opacity: .45;
+}
+
+.sheet__notes{
+  margin-top: 48px;
+  font-size: 9px;
+  letter-spacing: .1em;
+  line-height: 2.2;
+  opacity: .7;
+}
+
+/* ============================================================================
+   INFO
+   ========================================================================== */
+
+.info-top{
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  letter-spacing: .06em;
+  line-height: 1.75;
+}
+.info-top .col{ max-width: 46ch; }
+.info-top .label{ display:block; margin-bottom: 6px; }
+.info-services{ opacity: .78; }
+
+.info-strip{
+  display: flex;
+  gap: 10px;
+  margin: 60px 0;
+  height: 44vh;
+}
+.info-strip img{
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter .6s var(--ease);
+}
+.info-strip img:hover{ filter: grayscale(0) contrast(1); }
+
+.info-clients__heading{ font-size: 13px; letter-spacing: .08em; margin-bottom: 22px; }
+
+.info-clients{
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.info-clients .group{ max-width: 52ch; }
+.info-clients .group h3{
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: .12em;
+  opacity: .5;
+  margin-bottom: 8px;
+}
+.info-clients .group p{
+  font-size: 11px;
+  letter-spacing: .05em;
+  line-height: 1.85;
+  opacity: .82;
+}
+
+.info-footer{
+  margin-top: 72px;
+  text-align: center;
+  font-size: 8px;
+  letter-spacing: .12em;
+  line-height: 1.9;
+  opacity: .45;
+}
+
+/* ============================================================================
+   CONTACT
+   ========================================================================== */
+
+.contact{
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.contact__portrait{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact__portrait img{
+  height: 94vh;
+  width: auto;
+  object-fit: contain;
+  opacity: .92;
+  /* melt the edges of the plate into the page so it reads as an image,
+     not a pasted-in rectangle */
+  -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, #000 38%, transparent 100%);
+          mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, #000 38%, transparent 100%);
+}
+
+/* The four links sit top / upper-mid / lower-mid / bottom, centred */
+.contact__links{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7vh 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.contact__links a{
+  pointer-events: auto;
+  font-size: var(--nav-size);
+  letter-spacing: .02em;
+  color: var(--fg);
+  opacity: .9;
+  transition: opacity .3s var(--ease);
+  /* a white halo keeps the words crisp where they cross the smoke */
+  text-shadow: 0 0 16px rgba(255,255,255,.9), 0 0 5px rgba(255,255,255,.8);
+}
+.contact__links a:hover{ opacity: 1; }
+
+/* the two middle links need breathing room from the centre logo */
+.contact__links a:nth-child(2){ transform: translateY(-6vh); }
+.contact__links a:nth-child(3){ transform: translateY(6vh); }
+
+/* ============================================================================
+   RESPONSIVE — phones
+   The nav stops trying to span the screen and stacks instead.
+   ========================================================================== */
+
+@media (max-width: 760px){
+  :root{ --nav-size: 15px; }
+
+  /* HOME on a phone keeps the stacked, centred treatment — there is nothing
+     else on the screen for it to collide with. */
+  body.home .nav{
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 0 var(--gutter);
+  }
+  body.home .nav__item--end{ align-items: center; text-align: center; }
+  body.home .nav__logo{ order: -1; margin-bottom: 4px; }
+
+  /* EVERY OTHER PAGE on a phone pins the row to the foot, so it never sits
+     on top of the work or the words. */
+  body:not(.home) .nav{
+    top: auto;
+    bottom: 0;
+    transform: none;
+    align-items: center;
+    gap: 4px;
+    padding: 10px var(--gutter);
+    background: var(--bg);
+    border-top: 1px solid rgba(128,128,128,.22);
+  }
+  body:not(.home) .nav__label{ font-size: 11px; letter-spacing: .04em; }
+  body:not(.home) .nav__logo{ font-size: 13px; }
+  body:not(.home) .sheet{ padding-bottom: 96px; }
+  body:not(.home) .strip-hint{ bottom: 52px; }
+  body:not(.home) .page-foot{ bottom: 52px; }
+
+  /* clock and year move to the corners so the stack stays clean */
+  .nav__meta{ display: none; }
+  .nav-meta-mobile{
+    position: fixed;
+    bottom: var(--gutter);
+    left: var(--gutter);
+    right: var(--gutter);
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--meta-size);
+    letter-spacing: .5px;
+    opacity: .55;
+    z-index: 95;
+  }
+
+  .home-tagline, .sound-toggle{ display: none; }
+
+  /* the corner clock/year row belongs to the home screen only */
+  body:not(.home) .nav-meta-mobile{ display: none; }
+
+  .panel{ width: 62vw; }
+  .panel__frame{ height: 62vh; }
+  .strip{ gap: 10px; }
+
+  .hint-wide{ display:none; }
+  .hint-narrow{ display:inline; }
+
+  /* the info strip becomes its own sideways scroll rather than eight slivers */
+  .info-strip{
+    height: 34vh;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .info-strip::-webkit-scrollbar{ display:none; }
+  .info-strip img{ flex: 0 0 auto; width: 38vw; }
+
+  /* keep the last contact link clear of the footer and the nav bar */
+  .contact__links{ padding: 8vh 0 16vh; }
+
+  .sheet{ padding: 64px var(--gutter) 90px; }
+  .info-strip{ height: 30vh; }
+  .info-top{ gap: 28px; }
+  .info-clients{ gap: 28px; }
+
+  .contact__links a:nth-child(2),
+  .contact__links a:nth-child(3){ transform: none; }
+  .contact__portrait img{ height: 70vh; }
+}
+
+/* On desktop the mobile meta row is not needed */
+@media (min-width: 761px){
+  .nav-meta-mobile{ display: none; }
+}
+
+/* Respect people who ask for less motion */
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition-duration: .01ms !important; }
+}
