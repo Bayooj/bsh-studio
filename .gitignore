@@ -1,0 +1,9 @@
+# camera masters and working files — keep these out of the repo
+*.mov
+*.MOV
+*.braw
+*.r3d
+*.prproj
+*.drp
+.DS_Store
+Thumbs.db
