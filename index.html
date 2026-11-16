@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bayo says hi — videography and film, Metro Vancouver.">
+<meta name="theme-color" content="#000000">
+<title>Bayo says hi</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/poppins-latin-200-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-dark home nav-center">
+
+  <!-- Looping showreel. Source is set from SITE.background in js/data.js -->
+  <div class="bg" id="bg"></div>
+
+  <!-- The five-slot navigation. Built from SITE.nav in js/data.js -->
+  <nav class="nav" id="nav" aria-label="Main"></nav>
+
+  <button class="sound-toggle" id="sound" type="button">SOUND ON</button>
+  <div class="home-tagline" data-bind="identity.tagline"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>

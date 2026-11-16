@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Selected videography work — Bayo says hi.">
+<meta name="theme-color" content="#000000">
+<title>Works — Bayo says hi</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-dark nav-center">
+
+  <nav class="nav" id="nav" aria-label="Main"></nav>
+
+  <div class="page-head">
+    <span>WORKS</span>
+    <span data-bind="identity.tagline"></span>
+  </div>
+
+  <!-- Panels are built from SITE.works in js/data.js -->
+  <main class="strip" id="strip" aria-label="Selected work"></main>
+
+  <div class="strip-hint"><span class="hint-wide">SCROLL OR DRAG SIDEWAYS — CLICK TO OPEN</span><span class="hint-narrow">SWIPE  →</span></div>
+
+  <!-- Full-size player -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Work viewer">
+    <div class="lightbox__inner">
+      <button class="lightbox__close" id="lightbox-close" type="button">CLOSE ✕</button>
+      <div id="lightbox-stage"></div>
+      <div class="lightbox__meta">
+        <span id="lightbox-title"></span>
+        <span id="lightbox-meta"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>
