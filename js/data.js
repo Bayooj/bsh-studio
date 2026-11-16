@@ -285,7 +285,7 @@ const SITE = {
       { label: "INSTAGRAM", href: "https://instagram.com/bayo_oj" },
       { label: "MAIL",      href: "mailto:bayosayshi@gmail.com"    },
       { label: "YOUTUBE",   href: "https://youtube.com/@Bayosayshi"  },
-      { label: "LINKEDIN",  href: "https://linkedin.com/in/ojoadebayo/" }
+      { label: "LINKEDIN",  href: "https://linkedin.com/in/ojoadebayo" }
     ],
     // Shown small at the bottom. Leave as empty strings to hide.
     location: "METRO VANCOUVER, BC",
